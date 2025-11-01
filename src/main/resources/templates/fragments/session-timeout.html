@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- Fragment for session timeout management -->
+    <div th:fragment="session-timeout">
+        <script>
+            // Автоматический выход при бездействии
+            (function() {
+                let inactivityTime = 3 * 60 * 1000; // 3 минуты бездействия
+                let warningTime = 2.5 * 60 * 1000; // Предупреждение за 30 секунд
+                let inactivityTimer;
+                let warningTimer;
+                let warningShown = false;
+
+                // Сброс таймера при активности
+                function resetTimer() {
+                    clearTimeout(inactivityTimer);
+                    clearTimeout(warningTimer);
+                    warningShown = false;
+                    closeWarningModal();
+
+                    // Предупреждение за 30 секунд до выхода
+                    warningTimer = setTimeout(function() {
+                        showWarningModal();
+                        warningShown = true;
+                    }, warningTime);
+
+                    // Автоматический выход через 3 минуты бездействия
+                    inactivityTimer = setTimeout(function() {
+                        logout();
+                    }, inactivityTime);
+                }
+
+                // Показать модальное окно предупреждения
+                function showWarningModal() {
+                    if (document.getElementById('inactivity-warning')) {
+                        return; // Модальное окно уже существует
+                    }
+
+                    let modal = document.createElement('div');
+                    modal.id = 'inactivity-warning';
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.7);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 999999;
+                    `;
+
+                    modal.innerHTML = `
+                        <div style="background: white; padding: 30px; border-radius: 10px; max-width: 400px; text-align: center;">
+                            <h3 style="margin: 0 0 15px 0; color: #f39c12;">⚠️ Предупреждение</h3>
+                            <p style="margin: 0 0 20px 0; color: #333;">
+                                Вы будете автоматически выведены из системы через 30 секунд из-за бездействия.
+                            </p>
+                            <button onclick="window.sessionTimeout.stayLoggedIn()" 
+                                    style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                                Остаться в системе
+                            </button>
+                        </div>
+                    `;
+
+                    document.body.appendChild(modal);
+                }
+
+                // Закрыть модальное окно предупреждения
+                function closeWarningModal() {
+                    let modal = document.getElementById('inactivity-warning');
+                    if (modal) {
+                        modal.remove();
+                    }
+                }
+
+                // Выход из системы
+                function logout() {
+                    window.location.href = '/perform_logout';
+                }
+
+                // Публичные методы
+                window.sessionTimeout = {
+                    stayLoggedIn: function() {
+                        resetTimer();
+                    }
+                };
+
+                // События для отслеживания активности пользователя
+                window.onload = resetTimer;
+                document.onmousemove = resetTimer;
+                document.onmousedown = resetTimer;
+                document.ontouchstart = resetTimer;
+                document.onclick = resetTimer;
+                document.onkeydown = resetTimer;
+                document.addEventListener('scroll', resetTimer, true);
+            })();
+        </script>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+

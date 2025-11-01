@@ -1,0 +1,254 @@
+<footer th:fragment="footer">
+  <style>
+    footer {
+      background: #fff;
+      padding: 60px 0 30px;
+      margin-top: 80px;
+      border-top: 3px solid #e8dff5;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 50px;
+      margin-bottom: 50px;
+      padding-bottom: 40px;
+      border-bottom: 2px solid #e8dff5;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .footer-logo {
+      font-size: 42px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .footer-description {
+      color: #9b93a8;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .footer-socials {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .social-icon {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(135deg, rgba(155, 126, 217, 0.1) 0%, rgba(181, 159, 224, 0.1) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      border: 2px solid #e8dff5;
+    }
+
+    .social-icon:hover {
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(155, 126, 217, 0.3);
+    }
+
+    .social-icon img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .social-icon:hover img {
+      filter: brightness(0) invert(1);
+    }
+
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .footer-col-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #4a4065;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .footer-col a {
+      color: #6b5b83;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s;
+      position: relative;
+      width: fit-content;
+    }
+
+    .footer-col a:hover {
+      color: #9b7ed9;
+      padding-left: 8px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-top: 30px;
+    }
+
+    .footer-copyright {
+      color: #9b93a8;
+      font-size: 14px;
+    }
+
+    .footer-payments {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .payment-icon {
+      height: 32px;
+      border-radius: 8px;
+      transition: all 0.3s;
+      border: 1px solid #e8dff5;
+      padding: 4px 8px;
+      background: #fff;
+    }
+
+    .payment-icon:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(155, 126, 217, 0.2);
+    }
+
+    .footer-contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-phone {
+      font-size: 18px;
+      font-weight: 700;
+      color: #4a4065;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .footer-phone:hover {
+      color: #9b7ed9;
+    }
+
+    .footer-email {
+      font-size: 14px;
+      color: #9b93a8;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .footer-top {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-payments {
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <div class="container">
+    <div class="footer-top">
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <div>
+          <h2 class="footer-logo">BICO</h2>
+          <p class="footer-description">
+            Ваш стильный выбор модной одежды. Мы предлагаем качественную одежду для всей семьи по доступным ценам.
+          </p>
+        </div>
+        <div class="footer-socials">
+          <a href="#" class="social-icon">
+            <img src="/icons/vk.png" alt="VK">
+          </a>
+          <a href="#" class="social-icon">
+            <img src="/icons/telegram.png" alt="Telegram">
+          </a>
+        </div>
+      </div>
+
+      <!-- Shop Column -->
+      <div class="footer-col">
+        <h3 class="footer-col-title">Магазин</h3>
+        <a href="#">Женщинам</a>
+        <a href="#">Мужчинам</a>
+        <a href="#">Детям</a>
+        <a href="#">Новинки</a>
+        <a href="#">Распродажа</a>
+      </div>
+
+      <!-- Info Column -->
+      <div class="footer-col">
+        <h3 class="footer-col-title">Информация</h3>
+        <a href="#">О магазине</a>
+        <a href="#">Доставка</a>
+        <a href="#">Возврат и обмен</a>
+        <a href="#">Таблица размеров</a>
+        <a href="#">Контакты</a>
+      </div>
+
+      <!-- Contact Column -->
+      <div class="footer-col">
+        <h3 class="footer-col-title">Контакты</h3>
+        <div class="footer-contact-info">
+          <a href="tel:+79991234567" class="footer-phone">+7 (999) 123-45-67</a>
+          <a href="tel:88005553535" class="footer-phone">8 (800) 555-35-35</a>
+          <p class="footer-email">support@bico.ru</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <p class="footer-copyright">© 2025 BICO. Все права защищены.</p>
+      <div class="footer-payments">
+        <img src="/icons/mastercard.png" alt="MasterCard" class="payment-icon">
+        <img src="/icons/mir.svg" alt="МИР" class="payment-icon">
+        <img src="/icons/tbank.png" alt="T-Bank" class="payment-icon">
+      </div>
+    </div>
+  </div>
+</footer>

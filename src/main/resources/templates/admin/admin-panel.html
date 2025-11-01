@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора - BICO</title>
+    <link rel="icon" type="image/png" href="/icons/logo.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: linear-gradient(135deg, #f8f6fc 0%, #f0ebf8 100%);
+            color: #4a4065;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .admin-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(155, 126, 217, 0.1);
+            border-bottom: 2px solid #e8dff5;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e8dff5;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .admin-logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            margin: 0;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .admin-logo:hover {
+            transform: scale(1.05);
+        }
+
+        /* User Info in Header */
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar-header {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(155, 126, 217, 0.3);
+            border: 2px solid #fff;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-header {
+            font-size: 15px;
+            font-weight: 700;
+            color: #4a4065;
+            line-height: 1.2;
+        }
+
+        .user-email-header {
+            font-size: 12px;
+            color: #9b93a8;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: #f8f6fc;
+            color: #9b7ed9;
+            border: 2px solid #e8dff5;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: #ede8f5;
+            border-color: #9b7ed9;
+            transform: translateY(-2px);
+        }
+
+        /* Horizontal Navigation */
+        .horizontal-nav {
+            padding: 0;
+            display: flex;
+            gap: 0;
+            flex-wrap: wrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .horizontal-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-item {
+            padding: 18px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #6b5b83;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-item img {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(155, 126, 217, 0.05);
+            color: #9b7ed9;
+            border-bottom-color: rgba(155, 126, 217, 0.3);
+        }
+
+        .nav-item:hover img {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(180deg, rgba(155, 126, 217, 0.08) 0%, transparent 100%);
+            border-bottom-color: #9b7ed9;
+            color: #9b7ed9;
+        }
+
+        .nav-item.active img {
+            opacity: 1;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background: transparent;
+            padding: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Скроллбар для main-content */
+        .main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: #f5f7fa;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        .content-header {
+            padding: 25px 30px;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(155, 126, 217, 0.1);
+            margin-bottom: 25px;
+            border: 1px solid #e8dff5;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #9b7ed9 0%, #b59fe0 100%);
+        }
+
+        .content-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4a4065;
+            margin: 0;
+        }
+
+        /* Table Container */
+        .table-container {
+            margin-top: 0;
+            background: #fff;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(155, 126, 217, 0.1);
+            border: 1px solid #e8dff5;
+        }
+
+        .table-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 18px 14px 45px;
+            border: 2px solid #e8dff5;
+            border-radius: 50px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+            background: #f8f6fc;
+        }
+
+        .search-box input:focus {
+            border-color: #9b7ed9;
+            box-shadow: 0 4px 16px rgba(155, 126, 217, 0.15);
+            background: #fff;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(155, 126, 217, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(155, 126, 217, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e06393 0%, #ef8ba7 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(224, 99, 147, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(224, 99, 147, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #7ed99b 0%, #9fe0b5 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(126, 217, 155, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(126, 217, 155, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f6fc;
+            color: #9b7ed9;
+            border: 2px solid #e8dff5;
+        }
+
+        .btn-secondary:hover {
+            background: #ede8f5;
+            border-color: #9b7ed9;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(155, 126, 217, 0.03) 0%, rgba(181, 159, 224, 0.03) 100%);
+            border-radius: 16px;
+            border: 1px solid #e8dff5;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b5b83;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 14px;
+            border: 2px solid #e8dff5;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            min-width: 160px;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: #9b7ed9;
+            box-shadow: 0 4px 16px rgba(155, 126, 217, 0.12);
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(155, 126, 217, 0.08);
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #f8f6fc 0%, #f0ebf8 100%);
+        }
+
+        .data-table th {
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #6b5b83;
+            border-bottom: 2px solid #e8dff5;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .data-table th:hover {
+            background: #e9ecef;
+        }
+
+        .data-table th.sortable::after {
+            content: " ⇅";
+            opacity: 0.3;
+        }
+
+        .data-table th.sort-asc::after {
+            content: " ↑";
+            opacity: 1;
+        }
+
+        .data-table th.sort-desc::after {
+            content: " ↓";
+            opacity: 1;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eaf0f5;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f5f7fa;
+        }
+
+        .data-table .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: rgba(155, 126, 217, 0.08);
+            color: #9b7ed9;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: rgba(155, 126, 217, 0.15);
+            transform: scale(1.05);
+        }
+
+        .action-btn.edit:hover {
+            background: rgba(126, 217, 155, 0.15);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(224, 99, 147, 0.15);
+        }
+
+        .action-btn.restore:hover {
+            background: rgba(126, 155, 217, 0.15);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 25px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(155, 126, 217, 0.03) 0%, rgba(181, 159, 224, 0.03) 100%);
+            border-radius: 50px;
+            border: 1px solid #e8dff5;
+        }
+
+        .pagination button {
+            padding: 10px 18px;
+            border: 2px solid #e8dff5;
+            background: #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #6b5b83;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+            color: #fff;
+            border-color: #9b7ed9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(155, 126, 217, 0.3);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #f8f6fc;
+        }
+
+        .pagination .page-info {
+            padding: 10px 20px;
+            font-weight: 600;
+            color: #6b5b83;
+            background: rgba(155, 126, 217, 0.08);
+            border-radius: 50px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #9b7ed9;
+        }
+
+        .loading::after {
+            content: "Загрузка данных...";
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #9b93a8;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 12px;
+            font-size: 22px;
+            color: #6b5b83;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            text-align: center;
+            padding: 120px 40px;
+            color: #6b5b83;
+            background: linear-gradient(135deg, #f8f6fc 0%, #f0ebf8 100%);
+            border-radius: 20px;
+        }
+
+        .welcome-screen h2 {
+            font-size: 36px;
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .welcome-screen p {
+            font-size: 18px;
+            color: #9b93a8;
+        }
+
+        /* Tabs for deleted items */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 6px;
+            background: linear-gradient(135deg, rgba(155, 126, 217, 0.05) 0%, rgba(181, 159, 224, 0.05) 100%);
+            border-radius: 50px;
+            border: 1px solid #e8dff5;
+        }
+
+        .tab {
+            padding: 12px 28px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b5b83;
+            transition: all 0.3s;
+            border-radius: 50px;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: #9b7ed9;
+            background: rgba(155, 126, 217, 0.08);
+        }
+
+        .tab.active {
+            color: #fff;
+            background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+            box-shadow: 0 4px 12px rgba(155, 126, 217, 0.3);
+        }
+
+        /* Checkbox */
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #9b7ed9;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .horizontal-nav {
+                overflow-x: auto;
+            }
+
+            .nav-item {
+                flex-shrink: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .table-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-content">
+                <!-- Header Top -->
+                <div class="header-top">
+                    <div class="header-left">
+                        <a href="/" class="admin-logo">BICO</a>
+                        <div class="user-info-header">
+                            <div class="user-avatar-header" th:text="${user.email.substring(0,1).toUpperCase()}">U</div>
+                            <div class="user-details">
+                                <div class="user-name-header" th:text="${user.name}">Имя пользователя</div>
+                                <div class="user-email-header" th:text="${user.email}">email@example.com</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <a href="/profile" class="back-btn">
+                            <img src="/icons/logout.png" alt="back" style="width: 16px; height: 16px;">
+                            Вернуться в профиль
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Horizontal Navigation -->
+                <nav class="horizontal-nav">
+                    <a href="#" class="nav-item" data-entity="users">
+                        <img src="/icons/users.png" alt="users">
+                        <span>Пользователи</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="roles">
+                        <img src="/icons/roles.png" alt="roles">
+                        <span>Роли</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="categories">
+                        <img src="/icons/category.png" alt="categories">
+                        <span>Категории</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="manufacturers">
+                        <img src="/icons/manufacture.png" alt="manufacturers">
+                        <span>Производители</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="suppliers">
+                        <img src="/icons/suppliers.png" alt="suppliers">
+                        <span>Поставщики</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="productdetails">
+                        <img src="/icons/compare.png" alt="productdetails">
+                        <span>Детали товаров</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="products">
+                        <img src="/icons/products.png" alt="products">
+                        <span>Товары</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="orders">
+                        <img src="/icons/grocery-store.png" alt="orders">
+                        <span>Заказы</span>
+                    </a>
+                    <a href="#" class="nav-item" data-entity="reviews">
+                        <img src="/icons/like.png" alt="reviews">
+                        <span>Отзывы</span>
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="content-header">
+                <h1 id="pageTitle">Панель администратора</h1>
+            </div>
+
+            <div id="contentArea">
+                <div class="welcome-screen">
+                    <h2>Добро пожаловать в панель администратора!</h2>
+                    <p>Выберите сущность в меню сверху для управления данными</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentEntity = null;
+        let currentPage = 0;
+        let currentSize = 10;
+        let currentSortBy = 'id';
+        let currentSortDir = 'asc';
+        let currentFilters = {};
+        let showDeleted = false;
+
+        // Entity Configuration
+        const entityConfig = {
+            users: {
+                title: 'Таблица: Пользователи',
+                endpoint: '/api/admin/users',
+                columns: ['ID', 'Email', 'Имя', 'Телефон', 'Роль', 'Активен', 'Действия'],
+                fields: ['id', 'email', 'name', 'phone', 'role.name', 'active'],
+                searchField: 'query',
+                filters: [
+                    { name: 'searchType', label: 'Тип поиска', type: 'select', options: [
+                        { value: '', label: 'Все' },
+                        { value: 'name', label: 'По имени' },
+                        { value: 'email', label: 'По email' }
+                    ]}
+                ]
+            },
+            roles: {
+                title: 'Таблица: Роли',
+                endpoint: '/api/admin/roles',
+                columns: ['ID', 'Название', 'Описание', 'Действия'],
+                fields: ['id', 'name', 'description'],
+                searchField: 'query'
+            },
+            categories: {
+                title: 'Таблица: Категории',
+                endpoint: '/api/admin/categories',
+                columns: ['ID', 'Название', 'Описание', 'Действия'],
+                fields: ['id', 'name', 'description'],
+                searchField: 'query'
+            },
+            manufacturers: {
+                title: 'Таблица:Производители',
+                endpoint: '/api/admin/manufacturers',
+                columns: ['ID', 'Название', 'Страна', 'Email', 'Телефон', 'Действия'],
+                fields: ['id', 'name', 'country', 'email', 'phone'],
+                searchField: 'query',
+                filters: [
+                    { name: 'country', label: 'Страна', type: 'text' }
+                ]
+            },
+            suppliers: {
+                title: 'Таблица: Поставщики',
+                endpoint: '/api/admin/suppliers',
+                columns: ['ID', 'Название', 'Контактное лицо', 'Email', 'Телефон', 'Действия'],
+                fields: ['id', 'name', 'contactPerson', 'email', 'phone'],
+                searchField: 'query'
+            },
+            productdetails: {
+                title: 'Таблица: Детали товаров',
+                endpoint: '/api/admin/productdetails',
+                columns: ['ID', 'Товар', 'Название характеристики', 'Значение характеристики', 'Действия'],
+                fields: ['id', 'product.name', 'characteristicName', 'characteristicValue'],
+                searchField: 'query'
+            },
+            products: {
+                title: 'Таблица: Товары',
+                endpoint: '/api/admin/products',
+                columns: ['ID', 'Название', 'Цена', 'Количество', 'Категория', 'Производитель', 'Действия'],
+                fields: ['id', 'name', 'price', 'stockQuantity', 'category.name', 'manufacturer.name'],
+                searchField: 'query',
+                filters: [
+                    { name: 'minPrice', label: 'Мин. цена', type: 'number' },
+                    { name: 'maxPrice', label: 'Макс. цена', type: 'number' }
+                ]
+            },
+            orders: {
+                title: 'Таблица: Заказы',
+                endpoint: '/api/admin/orders',
+                columns: ['ID', 'Пользователь', 'Сумма', 'Статус', 'Дата создания', 'Действия'],
+                fields: ['id', 'user.name', 'totalAmount', 'status', 'createdAt'],
+                searchField: 'query',
+                filters: [
+                    { name: 'status', label: 'Статус', type: 'select', options: [
+                        { value: '', label: 'Все' },
+                        { value: 'PENDING', label: 'В ожидании' },
+                        { value: 'CONFIRMED', label: 'Подтвержден' },
+                        { value: 'PROCESSING', label: 'В обработке' },
+                        { value: 'SHIPPED', label: 'Отправлен' },
+                        { value: 'DELIVERED', label: 'Доставлен' },
+                        { value: 'CANCELLED', label: 'Отменен' }
+                    ]}
+                ]
+            },
+            reviews: {
+                title: 'Таблица: Отзывы',
+                endpoint: '/api/admin/reviews',
+                columns: ['ID', 'Товар', 'Пользователь', 'Рейтинг', 'Комментарий', 'Дата', 'Действия'],
+                fields: ['id', 'product.name', 'user.name', 'rating', 'comment', 'createdAt'],
+                searchField: 'query',
+                filters: [
+                    { name: 'rating', label: 'Рейтинг', type: 'select', options: [
+                        { value: '', label: 'Все' },
+                        { value: '5', label: '5 звезд' },
+                        { value: '4', label: '4 звезды' },
+                        { value: '3', label: '3 звезды' },
+                        { value: '2', label: '2 звезды' },
+                        { value: '1', label: '1 звезда' }
+                    ]}
+                ]
+            }
+        };
+
+        // Load Entity Data
+        async function loadEntity(entity) {
+            currentEntity = entity;
+            showDeleted = false;
+            currentPage = 0;
+            currentFilters = {};
+            
+            const config = entityConfig[entity];
+            document.getElementById('pageTitle').textContent = config.title;
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.entity === entity) {
+                    item.classList.add('active');
+                }
+            });
+            
+            renderTable(config);
+            await fetchData();
+        }
+
+        // Render Table Structure
+        function renderTable(config) {
+            const contentArea = document.getElementById('contentArea');
+            
+            let filtersHTML = '';
+            if (config.filters) {
+                filtersHTML = '<div class="filters">';
+                config.filters.forEach(filter => {
+                    filtersHTML += `
+                        <div class="filter-group">
+                            <label>${filter.label}</label>`;
+                    
+                    if (filter.type === 'select') {
+                        filtersHTML += `<select id="filter-${filter.name}" onchange="applyFilters()">`;
+                        filter.options.forEach(opt => {
+                            filtersHTML += `<option value="${opt.value}">${opt.label}</option>`;
+                        });
+                        filtersHTML += `</select>`;
+                    } else {
+                        filtersHTML += `<input type="${filter.type}" id="filter-${filter.name}" onchange="applyFilters()">`;
+                    }
+                    
+                    filtersHTML += `</div>`;
+                });
+                filtersHTML += '</div>';
+            }
+            
+            contentArea.innerHTML = `
+                <div class="table-container">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('active')">Активные</button>
+                        <button class="tab" onclick="switchTab('deleted')">Удаленные</button>
+                    </div>
+                    
+                    <div class="table-controls">
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="Поиск..." onkeyup="handleSearch()">
+                        </div>
+                        <div class="table-actions">
+                            <button class="btn btn-primary" onclick="createItem()">Добавить запись</button>
+                            <button class="btn btn-danger" onclick="deleteSelected()" id="deleteSelectedBtn" style="display:none;">Удалить выбранные</button>
+                        </div>
+                    </div>
+                    
+                    ${filtersHTML}
+                    
+                    <div id="tableContent">
+                        <div class="loading"></div>
+                    </div>
+                    
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            `;
+        }
+
+        // Fetch Data from API
+        async function fetchData() {
+            const config = entityConfig[currentEntity];
+            const tableContent = document.getElementById('tableContent');
+            tableContent.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                // Build URL with parameters
+                let url = `/api/admin/${currentEntity}?page=${currentPage}&size=${currentSize}&sortBy=${currentSortBy}&sortDir=${currentSortDir}&deleted=${showDeleted}`;
+                
+                // Add search
+                const searchValue = document.getElementById('searchInput')?.value;
+                if (searchValue) {
+                    url += `&${config.searchField}=${encodeURIComponent(searchValue)}`;
+                }
+                
+                // Add filters
+                Object.keys(currentFilters).forEach(key => {
+                    if (currentFilters[key]) {
+                        url += `&${key}=${encodeURIComponent(currentFilters[key])}`;
+                    }
+                });
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderTableData(config, data.content);
+                    renderPagination(data.currentPage, data.totalPages);
+                } else {
+                    tableContent.innerHTML = `<div class="empty-state"><h3>Ошибка</h3><p>${data.message}</p></div>`;
+                }
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                tableContent.innerHTML = '<div class="empty-state"><h3>Ошибка загрузки данных</h3></div>';
+            }
+        }
+
+        // Render Table Data
+        function renderTableData(config, data) {
+            const tableContent = document.getElementById('tableContent');
+            
+            if (!data || data.length === 0) {
+                tableContent.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Нет данных для отображения</h3>
+                        <p>Начните с создания новой записи</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let tableHTML = '<table class="data-table"><thead><tr>';
+            tableHTML += '<th><input type="checkbox" class="checkbox" onchange="toggleSelectAll(this)"></th>';
+            
+            config.columns.forEach((col, index) => {
+                if (col !== 'Действия') {
+                    const field = config.fields[index];
+                    let sortClass = 'sortable';
+                    if (currentSortBy === field) {
+                        sortClass += currentSortDir === 'asc' ? ' sort-asc' : ' sort-desc';
+                    }
+                    tableHTML += `<th class="${sortClass}" onclick="sortBy('${field}')">${col}</th>`;
+                } else {
+                    tableHTML += `<th>${col}</th>`;
+                }
+            });
+            
+            tableHTML += '</tr></thead><tbody>';
+            
+            data.forEach(item => {
+                tableHTML += '<tr>';
+                tableHTML += `<td><input type="checkbox" class="checkbox row-checkbox" value="${item.id}" onchange="updateDeleteButton()"></td>`;
+                
+                config.fields.forEach(field => {
+                    let value = getNestedValue(item, field);
+                    
+                    // Format special values
+                    if (value === true) value = '✓ Да';
+                    if (value === false) value = '✗ Нет';
+                    if (field.includes('createdAt') || field.includes('updatedAt')) {
+                        value = value ? new Date(value).toLocaleString('ru-RU') : '-';
+                    }
+                    if (field === 'price' || field === 'totalAmount') {
+                        value = value ? `${parseFloat(value).toFixed(2)} ₽` : '-';
+                    }
+                    
+                    tableHTML += `<td>${value || '-'}</td>`;
+                });
+                
+                tableHTML += '<td><div class="actions">';
+                tableHTML += `<button class="action-btn edit" onclick="editItem(${item.id})"><img src="/icons/edit.png" alt="edit" style="width: 16px; height: 16px;"></button>`;
+                
+                if (showDeleted) {
+                    tableHTML += `<button class="action-btn restore" onclick="restoreItem(${item.id})"><img src="/icons/restore.png" alt="delete" style="width: 16px; height: 16px;"></button>`;
+                    tableHTML += `<button class="action-btn delete" onclick="deleteItem(${item.id}, true)"><img src="/icons/trash.png" alt="delete" style="width: 16px; height: 16px;"></button>`;
+                } else {
+                    tableHTML += `<button class="action-btn delete" onclick="deleteItem(${item.id}, false)"><img src="/icons/trash.png" alt="delete" style="width: 16px; height: 16px;"></button>`;
+                }
+                
+                tableHTML += '</div></td>';
+                tableHTML += '</tr>';
+            });
+            
+            tableHTML += '</tbody></table>';
+            tableContent.innerHTML = tableHTML;
+        }
+
+        // Helper function to get nested object values
+        function getNestedValue(obj, path) {
+            return path.split('.').reduce((current, prop) => current?.[prop], obj);
+        }
+
+        // Search Handler
+        let searchTimeout;
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 0;
+                fetchData();
+            }, 500);
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            const config = entityConfig[currentEntity];
+            currentFilters = {};
+            
+            if (config.filters) {
+                config.filters.forEach(filter => {
+                    const value = document.getElementById(`filter-${filter.name}`)?.value;
+                    if (value) {
+                        currentFilters[filter.name] = value;
+                    }
+                });
+            }
+            
+            currentPage = 0;
+            fetchData();
+        }
+
+        // Sort By
+        function sortBy(field) {
+            if (currentSortBy === field) {
+                currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortBy = field;
+                currentSortDir = 'asc';
+            }
+            fetchData();
+        }
+
+        // Switch Tab (Active/Deleted)
+        function switchTab(tab) {
+            showDeleted = tab === 'deleted';
+            currentPage = 0;
+            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            fetchData();
+        }
+
+        // Pagination
+        function renderPagination(currentPage, totalPages) {
+            const pagination = document.getElementById('pagination');
+            
+            let html = `
+                <button onclick="goToPage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Предыдущая</button>
+                <span class="page-info">Страница ${currentPage + 1} из ${totalPages}</span>
+                <button onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Следующая</button>
+            `;
+            
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            if (page >= 0) {
+                currentPage = page;
+                fetchData();
+            }
+        }
+
+        // CRUD Operations (old methods kept for compatibility)
+        function deleteItem(id, permanent) {
+            if (confirm(`Вы уверены, что хотите ${permanent ? 'удалить навсегда' : 'удалить'} эту запись?`)) {
+                const config = entityConfig[currentEntity];
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = permanent ? `${config.endpoint}/delete/${id}` : `${config.endpoint}/logic-delete/${id}`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function restoreItem(id) {
+            if (confirm('Вы уверены, что хотите восстановить эту запись?')) {
+                const config = entityConfig[currentEntity];
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `${config.endpoint}/restore/${id}`;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            const ids = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (ids.length === 0) {
+                alert('Выберите элементы для удаления');
+                return;
+            }
+            
+            if (confirm(`Вы уверены, что хотите удалить ${ids.length} записей?`)) {
+                const config = entityConfig[currentEntity];
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `${config.endpoint}/delete-multiple`;
+                
+                ids.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'logic';
+                form.appendChild(actionInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+            updateDeleteButton();
+        }
+
+        function updateDeleteButton() {
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            deleteBtn.style.display = checkboxes.length > 0 ? 'block' : 'none';
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add click handlers to nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const entity = item.dataset.entity;
+                    loadEntity(entity);
+                });
+            });
+            
+            // Check if there's an initial entity from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialEntity = urlParams.get('entity');
+            if (initialEntity && entityConfig[initialEntity]) {
+                // Find and activate the corresponding nav item
+                const navItem = document.querySelector(`.nav-item[data-entity="${initialEntity}"]`);
+                if (navItem) {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    navItem.classList.add('active');
+                }
+                loadEntity(initialEntity);
+            }
+        });
+
+        // Handle checkbox changes
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('row-checkbox')) {
+                updateDeleteButton();
+            }
+        });
+    </script>
+
+    <!-- Modal Styles -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-dialog {
+            background: white;
+            border-radius: 24px;
+            max-width: 650px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s;
+            box-shadow: 0 20px 60px rgba(155, 126, 217, 0.25);
+            border: 1px solid #e8dff5;
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid #e8dff5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(155, 126, 217, 0.05) 0%, rgba(181, 159, 224, 0.05) 100%);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: #4a4065;
+            background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close-btn:hover {
+            color: #000;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 25px 30px;
+            border-top: 2px solid #e8dff5;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(155, 126, 217, 0.02) 0%, rgba(181, 159, 224, 0.02) 100%);
+            border-radius: 0 0 24px 24px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #4a4065;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2px solid #e8dff5;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+            background: #fff;
+            color: #4a4065;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #9b7ed9;
+            box-shadow: 0 4px 16px rgba(155, 126, 217, 0.15);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 110px;
+            font-family: inherit;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .form-error {
+            color: #f21827;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .confirm-text {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .confirm-icon {
+            text-align: center;
+            font-size: 48px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <!-- Create/Edit Modal -->
+    <div id="crudModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 id="modalTitle">Создать</h3>
+                <button class="modal-close-btn" onclick="closeModal('crudModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="crudForm">
+                    <div id="formFields"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="submitForm()">Сохранить запись</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('crudModal')">Отмена </button>
+            </div>
+        </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-dialog" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Подтверждение удаления</h3>
+                <button class="modal-close-btn" onclick="closeModal('deleteModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-icon"><img src="/icons/warning.png" alt="delete" style="width: 48px; height: 48px;"></div>
+                <div class="confirm-text" id="deleteMessage">
+                    Вы уверены, что хотите удалить этот элемент?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Удалить запись</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditId = null;
+        let currentDeleteId = null;
+        let currentDeletePermanent = false;
+
+        // Form field configurations for each entity
+        const formFieldsConfig = {
+            users: [
+                { name: 'email', label: 'Email', type: 'email', required: true },
+                { name: 'name', label: 'Имя', type: 'text', required: true },
+                { name: 'phone', label: 'Телефон', type: 'tel', required: true, placeholder: '+79001234567' },
+                { name: 'password', label: 'Пароль', type: 'password', required: true },
+                { name: 'roleId', label: 'Роль', type: 'select', required: true, options: 'roles' },
+                { name: 'address', label: 'Адрес', type: 'text' },
+                { name: 'active', label: 'Активен', type: 'checkbox' }
+            ],
+            roles: [
+                { name: 'name', label: 'Название роли', type: 'text', required: true },
+                { name: 'description', label: 'Описание', type: 'textarea' }
+            ],
+            categories: [
+                { name: 'name', label: 'Название категории', type: 'text', required: true },
+                { name: 'description', label: 'Описание', type: 'textarea' }
+            ],
+            manufacturers: [
+                { name: 'name', label: 'Название производителя', type: 'text', required: true },
+                { name: 'country', label: 'Страна', type: 'text', required: true },
+                { name: 'email', label: 'Email', type: 'email' },
+                { name: 'phone', label: 'Телефон', type: 'tel', placeholder: '+79001234567' },
+                { name: 'address', label: 'Адрес', type: 'text' }
+            ],
+            suppliers: [
+                { name: 'name', label: 'Название поставщика', type: 'text', required: true },
+                { name: 'contactPerson', label: 'Контактное лицо', type: 'text', required: true },
+                { name: 'email', label: 'Email', type: 'email', required: true },
+                { name: 'phone', label: 'Телефон', type: 'tel', required: true, placeholder: '+79001234567' },
+                { name: 'address', label: 'Адрес', type: 'text', required: true }
+            ],
+            productdetails: [
+                { name: 'productId', label: 'Товар', type: 'select', required: true, options: 'products' },
+                { name: 'characteristicName', label: 'Название характеристики', type: 'text', required: true, placeholder: 'Цвет, Размер, Вес и т.д.' },
+                { name: 'characteristicValue', label: 'Значение характеристики', type: 'text', required: true, placeholder: 'Красный, XL, 1.5 кг и т.д.' }
+            ],
+            products: [
+                { name: 'name', label: 'Название товара', type: 'text', required: true },
+                { name: 'price', label: 'Цена', type: 'number', required: true, step: '0.01' },
+                { name: 'stockQuantity', label: 'Количество на складе', type: 'number', required: true },
+                { name: 'categoryId', label: 'Категория', type: 'select', required: true, options: 'categories' },
+                { name: 'manufacturerId', label: 'Производитель', type: 'select', required: true, options: 'manufacturers' }
+            ],
+            orders: [
+                { name: 'userId', label: 'Пользователь', type: 'select', required: true, options: 'users' },
+                { name: 'totalAmount', label: 'Общая сумма', type: 'number', required: true, step: '0.01' },
+                { name: 'status', label: 'Статус', type: 'select', required: true, options: [
+                    { value: 'PENDING', label: 'В ожидании' },
+                    { value: 'CONFIRMED', label: 'Подтвержден' },
+                    { value: 'PROCESSING', label: 'В обработке' },
+                    { value: 'SHIPPED', label: 'Отправлен' },
+                    { value: 'DELIVERED', label: 'Доставлен' },
+                    { value: 'CANCELLED', label: 'Отменен' }
+                ]},
+                { name: 'deliveryAddress', label: 'Адрес доставки', type: 'textarea', required: true },
+                { name: 'comment', label: 'Комментарий', type: 'textarea' }
+            ],
+            reviews: [
+                { name: 'productId', label: 'Товар', type: 'select', required: true, options: 'products' },
+                { name: 'userId', label: 'Пользователь', type: 'select', required: true, options: 'users' },
+                { name: 'rating', label: 'Рейтинг', type: 'select', required: true, options: [
+                    { value: '5', label: '5 звезд' },
+                    { value: '4', label: '4 звезды' },
+                    { value: '3', label: '3 звезды' },
+                    { value: '2', label: '2 звезды' },
+                    { value: '1', label: '1 звезда' }
+                ]},
+                { name: 'comment', label: 'Комментарий', type: 'textarea', required: true }
+            ]
+        };
+
+        // Open modal for creating
+        function createItem() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'Добавить запись';
+            renderFormFields();
+            openModal('crudModal');
+        }
+
+        // Open modal for editing
+        async function editItem(id) {
+            currentEditId = id;
+            document.getElementById('modalTitle').textContent = 'Редактировать запись';
+            renderFormFields();
+            
+            try {
+                const response = await fetch(`/api/admin/${currentEntity}/${id}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    fillFormData(data);
+                }
+            } catch (error) {
+                console.error('Error loading item:', error);
+            }
+            
+            openModal('crudModal');
+        }
+
+        // Render form fields based on entity
+        function renderFormFields() {
+            const fieldsConfig = formFieldsConfig[currentEntity];
+            const formFields = document.getElementById('formFields');
+            formFields.innerHTML = '';
+            
+            fieldsConfig.forEach(field => {
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.textContent = field.label + (field.required ? ' *' : '');
+                label.setAttribute('for', field.name);
+                formGroup.appendChild(label);
+                
+                let input;
+                
+                if (field.type === 'textarea') {
+                    input = document.createElement('textarea');
+                } else if (field.type === 'select') {
+                    input = document.createElement('select');
+                    input.innerHTML = '<option value="">Выберите...</option>';
+                    
+                    if (Array.isArray(field.options)) {
+                        field.options.forEach(opt => {
+                            const option = document.createElement('option');
+                            option.value = opt.value;
+                            option.textContent = opt.label;
+                            input.appendChild(option);
+                        });
+                    } else if (typeof field.options === 'string') {
+                        // Load options via AJAX
+                        loadSelectOptions(input, field.options);
+                    }
+                } else if (field.type === 'checkbox') {
+                    input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.style.width = 'auto';
+                } else {
+                    input = document.createElement('input');
+                    input.type = field.type;
+                }
+                
+                input.id = field.name;
+                input.name = field.name;
+                if (field.required && field.type !== 'checkbox') input.required = true;
+                if (field.placeholder) input.placeholder = field.placeholder;
+                if (field.step) input.step = field.step;
+                
+                formGroup.appendChild(input);
+                formFields.appendChild(formGroup);
+            });
+        }
+
+        // Load select options
+        async function loadSelectOptions(selectElement, entityType) {
+            try {
+                const response = await fetch(`/api/admin/${entityType}?size=1000`);
+                if (response.ok) {
+                    const data = await response.json();
+                    data.content.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.id;
+                        option.textContent = item.name || item.email || item.title;
+                        selectElement.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading options:', error);
+            }
+        }
+
+        // Fill form with data for editing
+        function fillFormData(data) {
+            const fieldsConfig = formFieldsConfig[currentEntity];
+            fieldsConfig.forEach(field => {
+                const input = document.getElementById(field.name);
+                if (input) {
+                    if (field.type === 'checkbox') {
+                        input.checked = data[field.name] || false;
+                    } else {
+                        // Handle nested objects (e.g., category.id -> categoryId)
+                        let value = data[field.name];
+                        
+                        // If value is undefined, try to extract from nested object
+                        if (value === undefined && field.name.endsWith('Id')) {
+                            const objectName = field.name.replace('Id', '');
+                            if (data[objectName] && data[objectName].id) {
+                                value = data[objectName].id;
+                            }
+                        }
+                        
+                        input.value = value || '';
+                    }
+                }
+            });
+        }
+
+        // Submit form
+        async function submitForm() {
+            const form = document.getElementById('crudForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            const data = {};
+            
+            formFieldsConfig[currentEntity].forEach(field => {
+                const input = document.getElementById(field.name);
+                if (input) {
+                    if (field.type === 'checkbox') {
+                        data[field.name] = input.checked;
+                    } else {
+                        data[field.name] = input.value;
+                    }
+                }
+            });
+            
+            try {
+                const url = currentEditId ? 
+                    `/api/admin/${currentEntity}/${currentEditId}` : 
+                    `/api/admin/${currentEntity}`;
+                
+                const method = currentEditId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('crudModal');
+                    await fetchData();
+                    alert(currentEditId ? 'Запись успешно обновлена!' : 'Запись успешно создана!');
+                } else {
+                    alert('Ошибка: ' + (result.message || 'Неизвестная ошибка'));
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка при сохранении: ' + error.message);
+            }
+        }
+
+        // Show delete confirmation
+        function deleteItem(id, permanent) {
+            currentDeleteId = id;
+            currentDeletePermanent = permanent;
+            
+            const message = permanent ? 
+                'Вы уверены, что хотите удалить этот элемент НАВСЕГДА? Это действие нельзя отменить!' : 
+                'Вы уверены, что хотите удалить этот элемент? Его можно будет восстановить позже.';
+            
+            document.getElementById('deleteMessage').textContent = message;
+            openModal('deleteModal');
+        }
+
+        // Confirm delete
+        async function confirmDelete() {
+            try {
+                const url = currentDeletePermanent ? 
+                    `/api/admin/${currentEntity}/${currentDeleteId}` : 
+                    `/api/admin/${currentEntity}/logic-delete/${currentDeleteId}`;
+                
+                const method = currentDeletePermanent ? 'DELETE' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('deleteModal');
+                    await fetchData();
+                    alert(currentDeletePermanent ? 'Запись удалена безвозвратно!' : 'Запись помечена как удаленная!');
+                } else {
+                    alert('Ошибка: ' + (result.message || 'Неизвестная ошибка'));
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ошибка при удалении: ' + error.message);
+            }
+        }
+
+        // Restore item
+        async function restoreItem(id) {
+            if (confirm('Вы уверены, что хотите восстановить этот элемент?')) {
+                try {
+                    const response = await fetch(`/api/admin/${currentEntity}/restore/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        await fetchData();
+                        alert('Запись успешно восстановлена!');
+                    } else {
+                        alert('Ошибка: ' + (result.message || 'Неизвестная ошибка'));
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Ошибка при восстановлении: ' + error.message);
+                }
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+
+    <!-- Session Timeout Script -->
+    <div th:replace="~{fragments/session-timeout :: session-timeout}"></div>
+</body>
+</html>
+

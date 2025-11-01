@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BICO - интернет магазин модной одежды</title>
+  <link rel="icon" type="image/png" href="/icons/logo.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #f8f6fc 0%, #f0ebf8 100%);
+      color: #4a4065;
+      min-height: 100vh;
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Hero Section */
+    .hero {
+      margin-top: 40px;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      padding: 80px 60px;
+      text-align: center;
+      color: #fff;
+      border-radius: 24px;
+      margin-bottom: 80px;
+      box-shadow: 0 20px 60px rgba(155, 126, 217, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -5%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      font-size: 20px;
+      margin-bottom: 40px;
+      opacity: 0.95;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-btn {
+      display: inline-block;
+      background: #fff;
+      color: #9b7ed9;
+      padding: 18px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(255, 255, 255, 0.4);
+    }
+
+    .hero-btn-secondary {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .hero-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #fff;
+    }
+
+    /* Features Section */
+    .features {
+      margin-bottom: 80px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .section-title {
+      font-size: 42px;
+      font-weight: 800;
+      color: #4a4065;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      color: #9b93a8;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(155, 126, 217, 0.1);
+      border: 2px solid #e8dff5;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(155, 126, 217, 0.2);
+      border-color: #9b7ed9;
+    }
+
+    .feature-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, rgba(155, 126, 217, 0.1) 0%, rgba(181, 159, 224, 0.1) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px;
+      font-size: 32px;
+    }
+
+    .feature-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #4a4065;
+      margin-bottom: 12px;
+    }
+
+    .feature-text {
+      font-size: 15px;
+      color: #9b93a8;
+      line-height: 1.6;
+    }
+
+    /* Categories Section */
+    .categories {
+      margin-bottom: 80px;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 25px;
+    }
+
+    .category-card {
+      background: #fff;
+      padding: 35px 25px;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(155, 126, 217, 0.1);
+      border: 2px solid #e8dff5;
+      cursor: pointer;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 16px 40px rgba(155, 126, 217, 0.2);
+      background: linear-gradient(135deg, rgba(155, 126, 217, 0.05) 0%, rgba(181, 159, 224, 0.05) 100%);
+      border-color: #9b7ed9;
+    }
+
+    .category-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    .category-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #4a4065;
+      margin-bottom: 8px;
+    }
+
+    .category-count {
+      font-size: 14px;
+      color: #9b93a8;
+    }
+
+    /* Stats Section */
+    .stats {
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      padding: 60px 40px;
+      border-radius: 24px;
+      margin-bottom: 80px;
+      box-shadow: 0 20px 60px rgba(155, 126, 217, 0.3);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+
+    .stat-item {
+      color: #fff;
+    }
+
+    .stat-number {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .stat-label {
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    /* CTA Section */
+    .cta {
+      background: #fff;
+      padding: 60px 40px;
+      border-radius: 24px;
+      text-align: center;
+      margin-bottom: 80px;
+      box-shadow: 0 8px 24px rgba(155, 126, 217, 0.1);
+      border: 2px solid #e8dff5;
+    }
+
+    .cta-title {
+      font-size: 36px;
+      font-weight: 800;
+      color: #4a4065;
+      margin-bottom: 20px;
+    }
+
+    .cta-text {
+      font-size: 18px;
+      color: #9b93a8;
+      margin-bottom: 35px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      color: #fff;
+      padding: 18px 50px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(155, 126, 217, 0.3);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(155, 126, 217, 0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero h1 {
+        font-size: 44px;
+      }
+
+      .hero p {
+        font-size: 18px;
+      }
+
+      .section-title {
+        font-size: 36px;
+      }
+
+      .features-grid,
+      .categories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 25px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 0 15px;
+      }
+
+      .hero {
+        padding: 60px 30px;
+        margin-top: 20px;
+      }
+
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .section-title {
+        font-size: 30px;
+      }
+
+      .section-subtitle {
+        font-size: 16px;
+      }
+
+      .features-grid,
+      .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+      }
+
+      .stat-number {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div th:insert="fragments/header :: header"></div>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Добро пожаловать в BICO</h1>
+        <p>Ваш стильный выбор модной одежды. Широкий ассортимент трендовых коллекций для мужчин, женщин и детей по доступным ценам.</p>
+        <div class="hero-buttons">
+          <a href="#categories" class="hero-btn">Каталог одежды</a>
+          <a href="#features" class="hero-btn hero-btn-secondary">Узнать больше</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="section-header">
+        <h2 class="section-title">Почему выбирают нас?</h2>
+        <p class="section-subtitle">Преимущества покупки в BICO</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🚚</div>
+          <h3 class="feature-title">Быстрая доставка</h3>
+          <p class="feature-text">Доставка по всей России за 2-5 дней. Бесплатная доставка при заказе от 3000₽.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3 class="feature-title">Качественные ткани</h3>
+          <p class="feature-text">Только качественные натуральные и премиум синтетические ткани от проверенных производителей.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏷️</div>
+          <h3 class="feature-title">Выгодные цены</h3>
+          <p class="feature-text">Доступные цены и регулярные распродажи. Скидки до 70% на коллекции прошлых сезонов.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">👗</div>
+          <h3 class="feature-title">Стилист онлайн</h3>
+          <p class="feature-text">Бесплатная консультация стилиста поможет подобрать идеальный образ для любого случая.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories" id="categories">
+      <div class="section-header">
+        <h2 class="section-title">Популярные категории</h2>
+        <p class="section-subtitle">Модная одежда для всей семьи</p>
+      </div>
+      <div class="categories-grid">
+        <div class="category-card">
+          <div class="category-icon">👔</div>
+          <h3 class="category-name">Мужская одежда</h3>
+          <p class="category-count">Рубашки, брюки, костюмы</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">👗</div>
+          <h3 class="category-name">Женская одежда</h3>
+          <p class="category-count">Платья, юбки, блузки</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">👶</div>
+          <h3 class="category-name">Детская одежда</h3>
+          <p class="category-count">От 0 до 16 лет</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">👟</div>
+          <h3 class="category-name">Обувь</h3>
+          <p class="category-count">Кроссовки, ботинки, туфли</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">👜</div>
+          <h3 class="category-name">Аксессуары</h3>
+          <p class="category-count">Сумки, ремни, шарфы</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">🧥</div>
+          <h3 class="category-name">Верхняя одежда</h3>
+          <p class="category-count">Куртки, пальто, пуховики</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">15,000+</div>
+          <div class="stat-label">Моделей одежды</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100,000+</div>
+          <div class="stat-label">Довольных покупателей</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Положительных отзывов</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Новинок каждый месяц</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <h2 class="cta-title">Станьте частью BICO</h2>
+      <p class="cta-text">Зарегистрируйтесь прямо сейчас и получите промокод на скидку 15% на первую покупку!</p>
+      <a href="#" class="cta-btn" onclick="openModal('registerModal'); return false;">Зарегистрироваться</a>
+    </section>
+  </main>
+
+  <div th:insert="fragments/footer :: footer"></div>
+  
+  <!-- Модальные окна авторизации и регистрации -->
+  <div th:insert="fragments/auth-reg-modals :: auth-reg-modals"></div>
+
+  <script>
+    // Плавная прокрутка к якорям
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href.startsWith('#')) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }
+      });
+    });
+
+    // Анимация появления элементов при прокрутке
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Применяем анимацию к элементам
+    document.querySelectorAll('.feature-card, .category-card, .stat-item, .cta').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+
+    // Добавляем задержку для последовательного появления
+    document.querySelectorAll('.feature-card').forEach((card, index) => {
+      card.style.transitionDelay = `${index * 0.1}s`;
+    });
+
+    document.querySelectorAll('.category-card').forEach((card, index) => {
+      card.style.transitionDelay = `${index * 0.08}s`;
+    });
+
+    document.querySelectorAll('.stat-item').forEach((stat, index) => {
+      stat.style.transitionDelay = `${index * 0.1}s`;
+    });
+  </script>
+
+</body>
+</html>

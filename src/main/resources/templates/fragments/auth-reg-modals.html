@@ -1,0 +1,479 @@
+<div th:fragment="auth-reg-modals">
+  <style>
+    /* ==================== ОБЩИЕ СТИЛИ МОДАЛОК ==================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 20px;
+      width: 400px;
+      padding: 35px;
+      transform: scale(0.7);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(155, 126, 217, 0.3);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e8dff5;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #4a4065;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .modal-close img {
+      width: 12px;
+      height: 12px;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .modal-form input {
+      width: 100%;
+      padding: 20px 15px 8px 15px;
+      border: 1px solid #eaf0f5;
+      border-radius: 4px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .modal-form input:focus {
+      border-color: #9b7ed9;
+      box-shadow: 0 4px 16px rgba(155, 126, 217, 0.12);
+    }
+
+    .input-wrapper label {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9b93a8;
+      font-size: 15px;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      background: #fff;
+      padding: 0 4px;
+    }
+
+    .input-wrapper input:focus + label,
+    .input-wrapper input:not(:placeholder-shown) + label {
+      top: 0;
+      font-size: 12px;
+      color: #9b7ed9;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 26px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .password-toggle img {
+      width: 16px;
+      height: 16px;
+    }
+
+    .modal-btn {
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(155, 126, 217, 0.3);
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(155, 126, 217, 0.4);
+    }
+
+    .modal-links {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .modal-links a {
+      color: #9b7ed9;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .modal-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #9b7ed9;
+      transition: width 0.3s;
+    }
+
+    .modal-links a:hover {
+      color: #7c5fbf;
+    }
+
+    .modal-links a:hover::after {
+      width: 100%;
+    }
+
+    /* ==================== ВСПЛЫВАЮЩАЯ ПОДСКАЗКА ДЛЯ ПАРОЛЯ ==================== */
+    .password-hint {
+      position: absolute;
+      top: -140px;
+      left: 0;
+      background: #fff;
+      border: 1px solid #eaf0f5;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 13px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: none;
+      z-index: 9999;
+      width: 300px;
+    }
+
+    .password-hint ul {
+      margin: 5px 0 0 15px;
+      padding: 0;
+    }
+
+    .password-hint li {
+      color: #666;
+    }
+
+    .password-hint li.valid {
+      color: #0a8a00;
+      text-decoration: line-through;
+    }
+  </style>
+
+  <!-- ==================== LOGIN MODAL ==================== -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Личный кабинет</h2>
+        <button class="modal-close" onclick="closeModal('loginModal')">
+          <img src="/icons/close.png" alt="close">
+        </button>
+      </div>
+      <div id="loginError" style="display: none; color: #c74375; margin-bottom: 15px; padding: 12px; background: #fef0f4; border-radius: 12px; font-size: 14px; border-left: 3px solid #c74375;"></div>
+      <form class="modal-form" action="/perform_login" method="post" onsubmit="return handleLogin(event)">
+        <div class="input-wrapper">
+          <input type="text" id="loginEmail" name="username" placeholder=" " required>
+          <label for="loginEmail">E-mail или номер телефона</label>
+        </div>
+        <div class="input-wrapper password-wrapper">
+          <input type="password" id="loginPassword" name="password" placeholder=" " required>
+          <label for="loginPassword">Пароль</label>
+          <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)">
+            <img src="/icons/eye.png" alt="toggle visibility">
+          </button>
+        </div>
+        <button type="submit" class="modal-btn">Войти</button>
+      </form>
+      <div class="modal-links">
+        <a onclick="openModal('forgotPasswordModal'); closeModal('loginModal')">Забыли пароль?</a>
+        <a onclick="openModal('registerModal'); closeModal('loginModal')">Регистрация</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== REGISTRATION MODAL ==================== -->
+  <div id="registerModal" class="modal-overlay">
+    <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2>Регистрация</h2>
+        <button class="modal-close" onclick="closeModal('registerModal')">
+          <img src="/icons/close.png" alt="close">
+        </button>
+      </div>
+      <div id="registerError" style="display: none; color: #c74375; margin-bottom: 15px; padding: 12px; background: #fef0f4; border-radius: 12px; font-size: 14px; border-left: 3px solid #c74375;"></div>
+      <form class="modal-form" id="registerForm" onsubmit="return handleRegister(event)">
+        <div class="input-wrapper">
+          <input type="text" id="registerName" name="name" placeholder=" " required minlength="2" maxlength="50">
+          <label for="registerName">Имя</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="email" id="registerEmail" name="email" placeholder=" " required>
+          <label for="registerEmail">Email</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="tel" id="registerPhone" name="phone" placeholder=" " required pattern="^\+?[0-9]{10,15}$">
+          <label for="registerPhone">Телефон (+79991234567)</label>
+        </div>
+
+        <div class="input-wrapper password-wrapper">
+          <input type="password" id="registerPassword" name="password" placeholder=" " required minlength="8">
+          <label for="registerPassword">Пароль (мин. 8 символов)</label>
+          <button type="button" class="password-toggle" onclick="togglePassword('registerPassword', this)">
+            <img src="/icons/eye.png" alt="toggle visibility">
+          </button>
+        </div>
+
+        <!-- ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ -->
+        <div id="passwordHint" class="password-hint">
+          <p>Пароль должен содержать:</p>
+          <ul>
+            <li id="rule-length">Минимум 8 символов</li>
+            <li id="rule-upper">Заглавную букву</li>
+            <li id="rule-lower">Строчную букву</li>
+            <li id="rule-digit">Цифру</li>
+            <li id="rule-special">Спецсимвол (!@#$%^&*)</li>
+          </ul>
+        </div>
+
+        <div class="input-wrapper password-wrapper">
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder=" " required>
+          <label for="confirmPassword">Повторите пароль</label>
+          <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)">
+            <img src="/icons/eye.png" alt="toggle visibility">
+          </button>
+        </div>
+        <button type="submit" class="modal-btn">Регистрация</button>
+      </form>
+      <div class="modal-links">
+        <a onclick="openModal('loginModal'); closeModal('registerModal')">У вас уже есть аккаунт?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FORGOT PASSWORD MODAL ==================== -->
+  <div id="forgotPasswordModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Забыли пароль?</h2>
+        <button class="modal-close" onclick="closeModal('forgotPasswordModal')">
+          <img src="/icons/close.png" alt="close">
+        </button>
+      </div>
+      <form class="modal-form">
+        <div class="input-wrapper">
+          <input type="text" id="forgotEmail" placeholder=" " required>
+          <label for="forgotEmail">E-mail или номер телефона</label>
+        </div>
+        <button type="submit" class="modal-btn">Отправить</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.add('active');
+      const errorDiv = document.getElementById(modalId.replace('Modal', 'Error'));
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.remove('active');
+    }
+
+    function togglePassword(inputId, button) {
+      const input = document.getElementById(inputId);
+      const img = button.querySelector('img');
+      if (input.type === 'password') {
+        input.type = 'text';
+        img.src = '/icons/hide.png';
+      } else {
+        input.type = 'password';
+        img.src = '/icons/eye.png';
+      }
+    }
+
+    function showError(errorDivId, message) {
+      const errorDiv = document.getElementById(errorDivId);
+      if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      try {
+        const response = await fetch('/perform_login', {
+          method: 'POST',
+          body: formData
+        });
+        if (response.ok || response.redirected) {
+          window.location.href = response.url || '/';
+        } else {
+          showError('loginError', 'Неверный email/телефон или пароль');
+        }
+      } catch (error) {
+        showError('loginError', 'Ошибка при входе. Попробуйте еще раз.');
+      }
+      return false;
+    }
+
+    async function handleRegister(event) {
+      event.preventDefault();
+      const form = event.target;
+      const password = document.getElementById('registerPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        showError('registerError', 'Пароли не совпадают');
+        return false;
+      }
+
+      const passwordRegex = {
+        length: password.length >= 8,
+        uppercase: /[A-ZА-Я]/.test(password),
+        lowercase: /[a-zа-я]/.test(password),
+        digit: /\d/.test(password),
+        special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+      };
+
+      for (const [key, valid] of Object.entries(passwordRegex)) {
+        if (!valid) {
+          showError('registerError', 'Пароль не соответствует требованиям');
+          return false;
+        }
+      }
+
+      const formData = new FormData(form);
+      try {
+        const response = await fetch('/register', {
+          method: 'POST',
+          body: formData
+        });
+        const text = await response.text();
+        if (response.ok && text.includes('Регистрация успешна')) {
+          alert('Регистрация успешна! Теперь вы можете войти.');
+          closeModal('registerModal');
+          openModal('loginModal');
+          form.reset();
+        } else {
+          showError('registerError', 'Ошибка при регистрации. Проверьте введенные данные.');
+        }
+      } catch (error) {
+        showError('registerError', 'Ошибка при регистрации. Попробуйте еще раз.');
+      }
+      return false;
+    }
+
+    // === ПОДСКАЗКА ПАРОЛЯ ===
+    const passwordInput = document.getElementById('registerPassword');
+    const passwordHint = document.getElementById('passwordHint');
+    const hintRules = {
+      length: document.getElementById('rule-length'),
+      upper: document.getElementById('rule-upper'),
+      lower: document.getElementById('rule-lower'),
+      digit: document.getElementById('rule-digit'),
+      special: document.getElementById('rule-special')
+    };
+
+    passwordInput.addEventListener('focus', () => {
+      passwordHint.style.display = 'block';
+    });
+
+    passwordInput.addEventListener('blur', () => {
+      setTimeout(() => passwordHint.style.display = 'none', 150);
+    });
+
+    passwordInput.addEventListener('input', () => {
+      const val = passwordInput.value;
+      const checks = {
+        length: val.length >= 8,
+        upper: /[A-ZА-Я]/.test(val),
+        lower: /[a-zа-я]/.test(val),
+        digit: /\d/.test(val),
+        special: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(val)
+      };
+
+      for (const [key, valid] of Object.entries(checks)) {
+        hintRules[key].classList.toggle('valid', valid);
+      }
+    });
+
+    // Закрытие модалки при клике вне
+    document.addEventListener('click', function(event) {
+      if (event.target.classList.contains('modal-overlay')) {
+        event.target.classList.remove('active');
+      }
+    });
+  </script>
+</div>

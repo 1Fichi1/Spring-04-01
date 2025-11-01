@@ -1,0 +1,458 @@
+<header th:fragment="header">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: #f8f6fc;
+      color: #4a4065;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* Main Header */
+    .main-header {
+      background: #fff;
+      padding: 25px 0;
+      box-shadow: 0 4px 20px rgba(155, 126, 217, 0.08);
+      border-bottom: 1px solid #e8dff5;
+    }
+
+    .header-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    /* Logo Section */
+    .logo-section {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .logo-section:hover .logo-text {
+      transform: scale(1.05);
+    }
+
+    .logo-text {
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+      margin: 0;
+      transition: all 0.3s;
+    }
+
+    .logo-tagline {
+      font-size: 11px;
+      color: #9b93a8;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: -2px;
+    }
+
+    /* Header Search */
+    .header-search {
+      flex: 1;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .header-search-input {
+      width: 100%;
+      padding: 15px 55px 15px 20px;
+      border: 2px solid #e8dff5;
+      border-radius: 50px;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s;
+      background: #f8f6fc;
+      color: #4a4065;
+    }
+
+    .header-search-input:focus {
+      border-color: #9b7ed9;
+      box-shadow: 0 4px 16px rgba(155, 126, 217, 0.15);
+      background: #fff;
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(155, 126, 217, 0.3);
+    }
+
+    .search-btn:hover {
+      transform: translateY(-50%) scale(1.05);
+      box-shadow: 0 6px 16px rgba(155, 126, 217, 0.4);
+    }
+
+    .search-btn img {
+      filter: brightness(0) invert(1);
+    }
+
+    /* Header Icons */
+    .header-icons {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .header-icon-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: #6b5b83;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s;
+      padding: 8px 12px;
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .header-icon-link:hover {
+      color: #9b7ed9;
+      background: rgba(155, 126, 217, 0.08);
+    }
+
+    .header-icon-link img {
+      filter: brightness(0) saturate(100%) invert(42%) sepia(13%) saturate(902%) hue-rotate(219deg) brightness(92%) contrast(86%);
+      transition: all 0.3s;
+    }
+
+    .header-icon-link:hover img {
+      filter: brightness(0) saturate(100%) invert(58%) sepia(30%) saturate(1129%) hue-rotate(218deg) brightness(89%) contrast(89%);
+      transform: scale(1.1);
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: 0;
+      right: 8px;
+      background: linear-gradient(135deg, #e06393 0%, #ef8ba7 100%);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* Navigation Bar */
+    .navigation-bar {
+      background: rgba(255, 255, 255, 0.98);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 16px rgba(155, 126, 217, 0.1);
+      border-bottom: 2px solid #e8dff5;
+    }
+
+    .main-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+    }
+
+    .nav-link {
+      padding: 20px 28px;
+      text-decoration: none;
+      color: #6b5b83;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.3s;
+      position: relative;
+      border-bottom: 3px solid transparent;
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #9b7ed9 0%, #b59fe0 100%);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #9b7ed9;
+      background: rgba(155, 126, 217, 0.05);
+    }
+
+    .nav-link:hover::before {
+      width: 60%;
+    }
+
+    .sale-link {
+      color: #e06393;
+      font-weight: 700;
+    }
+
+    .sale-link:hover {
+      color: #c74375;
+    }
+
+    /* User Avatar in Header */
+    .header-icon-link .user-avatar-header {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 3px 10px rgba(155, 126, 217, 0.35);
+      border: 2px solid #fff;
+    }
+
+    /* Back to top */
+    #backToTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #9b7ed9 0%, #b59fe0 100%);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      display: none;
+      transition: all 0.3s ease;
+      z-index: 9999;
+      box-shadow: 0 8px 24px rgba(155, 126, 217, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #backToTop:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(155, 126, 217, 0.5);
+    }
+
+    .backToTop img {
+      width: 18px;
+      height: 18px;
+      filter: brightness(0) invert(1);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .header-wrapper {
+        flex-wrap: wrap;
+      }
+
+      .header-search {
+        order: 3;
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+
+      .main-nav {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      .nav-link {
+        padding: 15px 20px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .logo-text {
+        font-size: 28px;
+      }
+
+      .logo-tagline {
+        font-size: 9px;
+      }
+
+      .header-icons {
+        gap: 15px;
+      }
+
+      .header-icon-link span {
+        display: none;
+      }
+
+      .footer-top {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+    }
+  </style>
+
+  <!-- Main Header -->
+  <div class="main-header">
+    <div class="container">
+      <div class="header-wrapper">
+        <!-- Logo -->
+        <a href="/" class="logo-section">
+          <h1 class="logo-text">BICO</h1>
+          <p class="logo-tagline">Fashion Store</p>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="header-search">
+          <input type="text" id="searchBar" class="header-search-input" placeholder="Поиск одежды, бренда или артикула...">
+          <button class="search-btn">
+            <img src="/icons/search.png" alt="search" style="width: 20px; height: 20px;">
+          </button>
+        </div>
+
+        <!-- Header Icons -->
+        <div class="header-icons">
+          <a class="header-icon-link" onclick="handleCabinetClick()" style="cursor: pointer;">
+            <img src="/icons/user.png" alt="cabinet" id="cabinetIcon" style="display: none; width: 24px; height: 24px;">
+            <div class="user-avatar-header" id="cabinetAvatar" style="display: none;">U</div>
+            <span>Профиль</span>
+          </a>
+          
+          <a class="header-icon-link" href="#">
+            <img src="/icons/favourite.png" alt="favorite" style="width: 24px; height: 24px;">
+            <span>Избранное</span>
+          </a>
+          
+          <a class="header-icon-link cart-link" href="#">
+            <img src="/icons/grocery-store.png" alt="cart" style="width: 24px; height: 24px;">
+            <span>Корзина</span>
+            <span class="cart-badge">0</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="navigation-bar" id="stickyHeader">
+    <div class="container">
+      <nav class="main-nav">
+        <a href="#" class="nav-link">Женщинам</a>
+        <a href="#" class="nav-link">Мужчинам</a>
+        <a href="#" class="nav-link">Детям</a>
+        <a href="#" class="nav-link">Обувь</a>
+        <a href="#" class="nav-link">Аксессуары</a>
+        <a href="#" class="nav-link">Новинки</a>
+        <a href="#" class="nav-link sale-link">Распродажа</a>
+      </nav>
+    </div>
+  </div>
+
+  <button id="backToTop" class="backToTop"><img src="/icons/arrow-up.png" alt="up"></button>
+
+  <script>
+    // Обновление иконки кабинета при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+      updateCabinetIcon();
+    });
+
+    // Функция обновления иконки кабинета
+    function updateCabinetIcon() {
+      const cabinetIcon = document.getElementById('cabinetIcon');
+      const cabinetAvatar = document.getElementById('cabinetAvatar');
+      
+      fetch('/api/auth/check', {
+        method: 'GET',
+        credentials: 'same-origin'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.authenticated && data.username) {
+          // Авторизован - показываем аватарку с первой буквой имени
+          if (cabinetIcon) cabinetIcon.style.display = 'none';
+          if (cabinetAvatar) {
+            cabinetAvatar.textContent = data.username.charAt(0).toUpperCase();
+            cabinetAvatar.style.display = 'flex';
+          }
+        } else {
+          // Не авторизован - показываем иконку user.png
+          if (cabinetIcon) cabinetIcon.style.display = 'block';
+          if (cabinetAvatar) cabinetAvatar.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('Ошибка проверки авторизации:', error);
+        // В случае ошибки показываем иконку user.png
+        if (cabinetIcon) cabinetIcon.style.display = 'block';
+        if (cabinetAvatar) cabinetAvatar.style.display = 'none';
+      });
+    }
+
+    // Функция обработки клика на "Кабинет"
+    function handleCabinetClick() {
+      // Делаем AJAX запрос для проверки авторизации
+      fetch('/api/auth/check', {
+        method: 'GET',
+        credentials: 'same-origin'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.authenticated) {
+          // Авторизован -> переход в профиль
+          window.location.href = '/profile';
+        } else {
+          // Не авторизован -> открытие модального окна
+          openModal('loginModal');
+        }
+      })
+      .catch(error => {
+        // В случае ошибки открываем модальное окно
+        console.error('Ошибка проверки авторизации:', error);
+        openModal('loginModal');
+      });
+    }
+
+    window.addEventListener("scroll", function () {
+      const btn = document.getElementById("backToTop");
+      if (window.scrollY > 300) {
+        btn.style.display = "flex";
+      } else {
+        btn.style.display = "none";
+      }
+    });
+
+    document.getElementById("backToTop").addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
+
+  <div th:insert="fragments/auth-reg-modals :: auth-reg-modals"></div>
+</header>
